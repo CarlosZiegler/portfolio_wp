@@ -6,7 +6,6 @@
      * Version:     1.0
      * Author:      Carlos Ziegler
      *
-     *
      */
     
     
@@ -83,17 +82,12 @@
     function register_portfolios_script()
     {
     
-       wp_enqueue_script('boot1', 'https://code.jquery.com/jquery-3.3.1.slim.min.js', array('jquery'), '', true);
-    
-        wp_enqueue_script('boot2', 'https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js', array('jquery'), '', true);
-    
-        wp_enqueue_script('boot3', 'https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js', array('jquery'), '', true);
-    
+        
         wp_register_script(
             'portfolio_bootstrap_js',
             plugin_dir_url(__FILE__) . 'assets/bootstrap-4.3.1-dist/js/bootstrap.js'
         );
-        //wp_enqueue_script('portfolio_bootstrap_js');
+        wp_enqueue_script('portfolio_bootstrap_js');
     
         wp_register_script(
             'portfolio_bootstrap_bundle_js',
@@ -108,16 +102,6 @@
         );
         wp_enqueue_script('lightbox_portfolio_js');
     
-        wp_register_script(
-            'slick_portfolio_js',
-            plugin_dir_url(__FILE__) . 'assets/js/slick.js'
-        );
-        wp_enqueue_script('slick_portfolio_js');
-    
-        
-        
-        
-        
     }
     
     add_action('wp_enqueue_scripts', 'register_portfolios_script');
@@ -144,23 +128,6 @@
         
         );
         wp_enqueue_style('style_Simple_portfolio');
-    
-    
-    
-        wp_register_style(
-            'style_Slick_portfolio',
-            plugin_dir_url(__FILE__) . 'assets/js/slick.css'
-    
-        );
-        wp_enqueue_style('style_Slick_portfolio');
-    
-        wp_register_style(
-            'style_Slick_Theme_portfolio',
-            plugin_dir_url(__FILE__) . 'assets/js/slick-theme.css'
-    
-        );
-        wp_enqueue_style('style_Slick_Theme_portfolio');
-        
         
         wp_register_style(
             'bootstrap_portfolio_single',
@@ -169,8 +136,16 @@
         );
         wp_enqueue_style('bootstrap_portfolio_single');
     
-        wp_enqueue_style('bootstrap4', 'https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css');
+        wp_enqueue_style('bootstrap4', 'https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.css');
+    
         
+        wp_register_style(
+            'carousel_style_portfolio',
+            plugin_dir_url(__FILE__) . 'assets/css/carouselstyle.css'
+    
+        );
+        wp_enqueue_style('carousel_style_portfolio');
+    
         
     }
     
@@ -206,14 +181,7 @@
         
         ?>
         <table class="form-table">
-            <tr>
-                <th scope="row"><label for="shortcode_portfolio"> Project Shortcode : </label></th>
-                <td><strong><input class="shortcode_portfolio" type="text"
-                                   value="[portfolio_visyu id=<?php echo $post->ID ?>]" disabled="disabled"
-                                   id="shortcode_portfolio" size="25"></td>
-                </strong>
-            </tr>
-            <tr>
+           <tr>
                 <th scope="row"><label for="portfolio_image"> Image : </label></th>
                 <td><input id="portfolio_image" type="text" name="portfolio_image"
                            value="<?php echo trim(get_post_meta($post->ID, 'image_portfolio', true)) ?>"/>
@@ -226,7 +194,7 @@
                            value="<?php echo trim(get_post_meta($post->ID, 'portfolio_project', true)) ?> "></td>
             </tr>
             <tr>
-                <th scope="row"><label for="portfolio_client"> Client : </label></th>
+                <th scope="row"><label for="portfolio_client"> Kunde : </label></th>
                 <td><input id="portfolio_client" type="text" name="portfolio_client"
                            value="<?php echo trim(get_post_meta($post->ID, 'portfolio_client', true)) ?> ">
                 <td>
@@ -295,13 +263,7 @@
             );
         }
         
-        if (isset($_POST['shortcode_portfolio'])) {
-            update_post_meta(
-                $post_id,
-                'shortcode_portfolio',
-                $_POST['shortcode_portfolio']
-            );
-        }
+        
         
         
     }
@@ -372,82 +334,79 @@
     function projects_visyu_shortcode()
     {
         
+        $slider = get_posts(array('post_type' => 'portfolio-visyu-type', 'posts_per_page' =>5, 'orderby'=> 'date','order'=> 'DESC', 'post_status' =>'publish'));
         
-        $slider = get_posts(array('post_type' => 'portfolio-visyu-type', 'posts_per_page' => 6));
-        
-        $count = 0;
-        
-        echo '<div class="container text-center w-75"  >
-                    <h4 class="title-a">
-                            UNSERE PROJEKTE
-                    </h4>
-                        <div class="line-mf"></div>
-                            <div id="carouselExampleCaptions" class=" carousel slide carousel-fade" data-ride="carousel" >
-                                <div class="carousel-inner " >
-                    ';
-        
-        
+        echo'
+        <h2 class="center">Projekte</h2>
+            <article id="slider">';
+        echo sizeof($slider);
+        //control
+        if (sizeof($slider)>0){ echo'<input class="input_car"  checked type="radio" name="slider" id="slide1"/>';}
+        if (sizeof($slider)>1){ echo'<input class="input_car" type="radio" name="slider" id="slide2"/>';}
+        if (sizeof($slider)>2){ echo'<input class="input_car"  type="radio" name="slider" id="slide3"/>';}
+        if (sizeof($slider)>3){ echo'<input class="input_car"  type="radio" name="slider" id="slide4"/>';}
+        if (sizeof($slider)>4){ echo'<input class="input_car"  type="radio" name="slider" id="slide5"/>';}
+        echo'
+    
+                <div id="slides">
+                    <div id="container">
+                        <div class="inner">
+           ';
+        $count=0;
+        echo sizeof($slider);
+        //Sliders
         foreach ($slider as $slide):
-            
+    
             $post_id = $slide->ID;
             
-            $client = esc_html(get_post_meta($post_id, 'portfolio_client', true));
             $img = esc_html(get_post_meta($post_id, 'image_portfolio', true));
-            $title = esc_html(get_the_title($post_id));
+            $project = esc_html(get_post_meta($post_id, 'portfolio_project', true));
             
+            echo'
             
-            if ($count == 0) {
-                echo '
-                    
-                        <div class=" carousel-item  active   " >
-                        <a href="' . get_post_permalink($post_id) . '" >
-                            <img src="' . $img . '" class=" d-block w-100 " alt="...">
+                        <article>
+                            <div class="caption">
+                                <bar>' . $project . $count. '</bar>
+                            </div>
+                             <a href="' . get_post_permalink($post_id) . '" >
+                            <img src="' . $img . '"/>
                             </a>
-                                 <div class="carousel-caption d-none d-md-block">
-                                     <h5>' . $title . '</h5>
-                                        <p>' . $client . '</p>
-                                        
-                                 </div>
-                         </div>';
-                $count++;
-            } else {
-                echo '<div class="carousel-item ">
-                        <a href="' . get_post_permalink($post_id) . '" >
-                            <img src="' . $img . '" class="d-block w-100" alt="..." >
-                            </a>
-                                 <div class="carousel-caption d-none d-md-block">
-                                     <h5>' . $title . '</h5>
-                                        <p>' . $client . '</p>
-                                        
-                                 </div>
-                         </div>';
-                $count++;
-            }
-        
-        
+                        </article>
+          ';
+            $count++;
         endforeach;
-        
-        
+    
         echo '
-                                                </div>
-                                            <a class="carousel-control-prev " href="#carouselExampleCaptions" role="button" data-slide="prev">
-                                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                                    <span class="sr-only">Previous</span>
-                                </a>
-                            <a class="carousel-control-next " href="#carouselExampleCaptions" role="button" data-slide="next">
-                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                    <span class="sr-only">Next</span>
-                </a>
-            </div>
-        </div>
-   
-     
 
- 
-
-        ';
-       
+                         </div>
+                    </div>
+               </div>
+               <div id="commands">
+                   ';
         
+        // Arrows
+        if (sizeof($slider)>0){ echo '<label for="slide1"></label>';}
+        if (sizeof($slider)>1){ echo '<label for="slide2"></label>';}
+        if (sizeof($slider)>2){ echo '<label for="slide3"></label>';}
+        if (sizeof($slider)>3){ echo '<label for="slide4"></label>';}
+        if (sizeof($slider)>4){ echo '<label for="slide5"></label>';}
+       
+            echo'
+                </div>
+                <br>
+                <div id="active"> ';
+        // Bullets
+        if (sizeof($slider)>0){ echo '     <label for="slide1"></label>';}
+        if (sizeof($slider)>1){ echo ' <label for="slide2"></label>';}
+        if (sizeof($slider)>2){ echo ' <label for="slide3"></label>';}
+        if (sizeof($slider)>3){ echo ' <label for="slide4"></label>';}
+        if (sizeof($slider)>4){ echo ' <label for="slide5"></label>';}echo'
+        
+                 </div>
+            </article>
+             ';
+        
+              
     }
     
     add_shortcode('projects_visyu_shortcode', 'projects_visyu_shortcode');
@@ -461,7 +420,7 @@
         $current_screen = get_current_screen();
         if ($current_screen->id === "edit-portfolio-visyu-type") {
             echo '<div class="updated notice">
-                    <p>Use the shortcode <strong><h3>[projects_visyu_shortcode]</h3></strong> to display a carrousel with All your projects.</p>
+                    <p>Use the shortcode <strong><h3>[projects_visyu_shortcode]</h3></strong> to display a carrousel with last 5 projects.</p>
                   </div>';
         }
     }

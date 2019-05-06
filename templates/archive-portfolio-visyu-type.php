@@ -34,12 +34,12 @@
             echo $head_content;
         ?>
         <?php $taxonomies = get_terms('project_category'); ?>
-       
+        
         <form action="<?php bloginfo('url'); ?>/portfolio/" method="get">
             <div class="form-row align-items-center">
                 <div class="col-auto my-3">
                     <select name="taxonomy" class="custom-select mr-sm-2" id="inlineFormCustomSelect">
-                        <option value='' selected>Choose a project category...</option>
+                        <option value='' selected>Alle Kategorien..</option>
                         <?php foreach ($taxonomies as $taxonomy) { ?>
                             <option value="<?= $taxonomy->slug; ?>"><?= $taxonomy->name; ?></option>
                         <?php } ?>
@@ -122,7 +122,7 @@
                                     </div>
                                      <div class="btn-group">
                                       <a href="' . get_post_permalink($projects[$i][id]) . '" >
-                                    <button type="button" class="btn-sm btn-outline-secondary">More</button>
+                                    <button type="button" class="btn-sm btn-outline-secondary">Mehr</button>
                                     </a>
                                     </div>
                                 </div>

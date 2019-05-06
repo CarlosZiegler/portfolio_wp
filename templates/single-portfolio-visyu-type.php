@@ -34,13 +34,13 @@
                 $text = rtrim($text, ', ');
                 // if Client field is empty, not print in Frontend
                 if (trim($client )!= ''){
-                    $client_label = 'Client : ';
+                    $client_label = 'Kunde : ';
                 }
                 // if Category field is empty, not print in Frontend
                 if (sizeof($category_array )!= 0){
-                    $category_label = 'Category : ';
+                    $category_label = 'Kategorie : ';
                 }
-               
+              
                 $display='
           <div class="row center">
             <div class="col-md-11 col-center m-auto">
